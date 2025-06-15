@@ -144,6 +144,27 @@ exports.addBackGunner = (type, name = -1) => {
     output.LABEL = name == -1 ? type.LABEL : name;
     return output;
 }
+exports.makeMulti = (type, count, name = -1, startRotation = 0) => {
+    type = ensureIsClass(type);
+    let greekNumbers = ',Double ,Triple ,Quad ,Penta ,Hexa ,Septa ,Octo ,Nona ,Deca ,Hendeca ,Dodeca ,Trideca ,Tetradeca ,Pentadeca ,Hexadeca ,Septadeca ,Octadeca ,Nonadeca ,Icosa ,Henicosa ,Doicosa ,Triaicosa ,Tetraicosa ,Pentaicosa ,Hexaicosa ,Septaicosa ,Octoicosa ,Nonaicosa ,Triaconta '.split(','),
+        output = exports.dereference(type),
+        fraction = 360 / count;
+    output.GUNS = [];
+    for (let gun of type.GUNS) {
+        for (let i = 0; i < count; i++) {
+            let newgun = exports.dereference(gun);
+            if (Array.isArray(newgun.POSITION)) {
+                newgun.POSITION[5] += startRotation + fraction * i;
+            } else {
+                newgun.POSITION.ANGLE = (newgun.POSITION.ANGLE ?? 0) + startRotation + fraction * i;
+            }
+            if (gun.PROPERTIES) newgun.PROPERTIES = gun.PROPERTIES;
+            output.GUNS.push(newgun);
+        };
+    }
+    output.LABEL = name == -1 ? (greekNumbers[count - 1] || (count + ' ')) + type.LABEL : name;
+    return output;
+}
 exports.makeBird = (type, name = -1, options = {}) => {
     type = ensureIsClass(type);
     let output = exports.dereference(type);
@@ -379,12 +400,17 @@ exports.makeCeption = (type, name = -1, options = {}) => {
     output.DANGER = type.DANGER + 1;
     return output;
 }
-exports.makeDeco = (shape = 0, color = 16) => {
-    return {
+exports.makeDeco = (shape = 0, color = 16, opts = {}) => {
+    let deco = {
         PARENT: "genericTank",
         SHAPE: shape,
         COLOR: color,
+      	INDEPENDENT: opts.indep
     };
+  	if (opts.spin == true) {
+  			deco.FACING_TYPE = ["spin", {independent: opts.indep, speed: opts.speed}]
+    }
+  	return deco
 }
 exports.makeRadialAuto = (type, options = {}) => {
 
@@ -410,6 +436,7 @@ exports.makeRadialAuto = (type, options = {}) => {
     let count = options.count ?? 3;
     let isTurret = options.isTurret ?? false;
     let turretIdentifier = type;
+    let noRecoil = options.noRecoil ?? false;
 
     if (!isTurret) {
         type = exports.dereference(type);
@@ -442,6 +469,7 @@ exports.makeRadialAuto = (type, options = {}) => {
     }
 
     let LABEL = options.label ?? (type.LABEL + "-" + count);
+    let HAS_NO_RECOIL = options.noRecoil ?? false;
     let turretSize = options.size ?? 11;
     let turretX = options.x ?? 8;
     let turretArc = options.arc ?? 190;
@@ -450,6 +478,7 @@ exports.makeRadialAuto = (type, options = {}) => {
     return {
         PARENT: 'genericTank',
         LABEL,
+        HAS_NO_RECOIL,
         FACING_TYPE: ["spin", {speed: options.rotation ?? 0.02}],
         DANGER: options.danger ?? (type.DANGER + 2),
         BODY: options.body ?? undefined,
@@ -804,6 +833,12 @@ exports.makeRare = (type, level) => {
         VALUE: [100, 500, 2000, 4000, 5000][level] * type.VALUE,
         SHAPE: type.SHAPE,
         SIZE: type.SIZE,
+        GLOW:  {
+            RADIUS: 2,
+            STRENGTH: 25,
+            COLOR: ["lightGreen", "teal", "darkGrey", "rainbow", "trans"][level],
+            ALPHA: 0.6
+        },
         COLOR: ["lightGreen", "teal", "darkGrey", "rainbow", "trans"][level],
         ALPHA: level == 2 ? 0.25 : 1,
         BODY: {
@@ -826,7 +861,7 @@ exports.makeLaby = (type, level, baseScale = 1) => {
         strengthMultiplier = 5 ** level;
     return {
         PARENT: "food",
-        LABEL: ["", "Beta ", "Alpha ", "Omega ", "Gamma ", "Delta "][level] + type.LABEL,
+        LABEL: ["", "Alpha ", "Beta ", "Gamma ", "Delta ", "Epsilon "][level] + type.LABEL,
         VALUE: type.VALUE * strengthMultiplier,
         SHAPE: type.SHAPE,
         SIZE: type.SIZE * baseScale / downscale ** level,

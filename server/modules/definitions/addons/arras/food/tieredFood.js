@@ -1,6 +1,8 @@
 module.exports = ({ Config }) => {
 	// To enable this addon, simply comment out the line below.
-	return console.log('[labyFood.js] Addon disabled by default');
+	return console.log('[tieredFood.js] Addon disabled by default');
+
+	// someone fix this addon so it doesnt pull from libretanks' default foods -zenphia
 
 	const disableCrashers = false;
 
@@ -56,5 +58,5 @@ module.exports = ({ Config }) => {
 		])
 	]);
 
-	console.log('[labyFood.js] Using Labyrinth Food.');
+	console.log('[tieredFood.js] Using Tiered Food.');
 };

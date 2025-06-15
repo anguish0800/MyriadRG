@@ -1,4 +1,5 @@
+let rand = Math.ceil(Math.random()) * 2
 module.exports = {
-    TEAMS: 2,
+    TEAMS: rand,
     TAG: true,
 };

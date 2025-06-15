@@ -1,6 +1,6 @@
 module.exports = [
     {
-        "key": process.env.TOKEN_1,
+        "key": process.env.Dev,
         "discordID": "0",
         "nameColor": "#ffffff",
         "class": "developer",
@@ -9,31 +9,12 @@ module.exports = [
         "note": "note here"
     },
     {
-        "key": process.env.TOKEN_2,
+        "key": process.env.Tester,
         "discordID": "0",
         "nameColor": "#ffffff",
-        "class": "developer",
+        "class": "myriad_beta",
         "infiniteLevelUp": true,
         "name": "unnamed#0000",
         "note": "note here"
-    },
-    {
-        "key": process.env.TOKEN_3,
-        "discordID": "0",
-        "nameColor": "#ffffff",
-        "class": "developer",
-        "infiniteLevelUp": true,
-        "name": "unnamed#0000",
-        "note": "note here"
-    },
-    {
-        "key": process.env.TOKEN_4,
-        "discordID": "0",
-        "nameColor": "#ffffff",
-        "class": "developer",
-        "infiniteLevelUp": true,
-        "name": "unnamed#0000",
-        "note": "note here",
-        "administrator": true,
     },
 ]

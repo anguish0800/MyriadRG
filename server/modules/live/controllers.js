@@ -229,6 +229,7 @@ class io_listenToPlayer extends IO {
                 y: this.body.y + this.player.command.movement.y,
             },
             main: fire,
+            INDEPENDENT_CHILDREN: true
         };
     }
 }
@@ -338,6 +339,30 @@ class io_alwaysFire extends IO {
         }
     }
 }
+function Deg2Rad(deg)  {
+	return deg * (Math.PI/180)
+}
+class io_portal2  extends IO {
+        constructor(body) {
+            super(body); this.portalAngle = Math.atan2(body.y - body.master.y, body.x - body.master.x) - Math.atan2(body.master.control.target.y, body.master.control.target.x) + Deg2Rad(180);
+            if (Math.abs(this.portalAngle) === Infinity) this.portalAngle = 0;
+            this.myGoal = {
+                x: body.master.control.target.x * Math.cos(this.portalAngle) - body.master.control.target.y * Math.sin(this.portalAngle) + body.master.x,
+                y: body.master.control.target.x * Math.sin(this.portalAngle) + body.master.control.target.y * Math.cos(this.portalAngle) + body.master.y
+        } 
+    };
+        think() {
+            this.body.x = this.myGoal.x;
+            this.body.y = this.myGoal.y;
+            return {
+                goal: {
+                    x: this.myGoal.x,
+                    y: this.myGoal.y
+                }
+            };
+        }
+    }
+// ↑ code stolen from the woo of my
 class io_targetSelf extends IO {
     constructor(body) {
         super(body)
@@ -947,6 +972,20 @@ class io_snake extends IO {
     }
 }
 
+class io_imitateMasterMovementsAndAngle extends IO {
+	constructor(body) {
+		super(body)
+	}
+
+	think(input) {
+		if (this.body.master.type === "bullet") {
+			this.body.facing = this.body.master.facing
+			this.body.velocity.x = this.body.master.velocity.x
+			this.body.velocity.y = this.body.master.velocity.y
+		}
+	}
+}
+
 class io_disableOnOverride extends IO {
     constructor(body) {
         super(body);
@@ -1012,6 +1051,7 @@ let ioTypes = {
     whirlwind: io_whirlwind,
     disableOnOverride: io_disableOnOverride,
     scaleWithMaster: io_scaleWithMaster,
+    imitateMaster: io_imitateMasterMovementsAndAngle,
 
     //aiming related
     stackGuns: io_stackGuns,
@@ -1020,6 +1060,7 @@ let ioTypes = {
     onlyAcceptInArc: io_onlyAcceptInArc,
     spin: io_spin,
     spin2: io_spin2,
+    portal2: io_portal2,
 
     //movement related
     canRepel: io_canRepel,

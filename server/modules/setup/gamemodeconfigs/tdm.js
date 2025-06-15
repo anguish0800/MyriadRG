@@ -1,5 +1,6 @@
+let rand = Math.ceil(Math.random()) * 2
 module.exports = {
     MODE: "tdm",
-    TEAMS: 4,
+    TEAMS: rand,
     ROOM_SETUP: ['overlay_tdm']
 };

@@ -167,6 +167,13 @@ Class.genericBoss = {
     BODY: { PUSHABILITY: 0.05 }
 }
 
+const depleteScore = (body, instance, newScore) => {
+    if (!instance) return
+    if (!instance.godmode && !instance.invuln && (instance.type == "tank" || instance.type == "miniboss" || instance.type == "crasher")) {
+	instance.value = newScore
+    }
+};
+
 Class.food = {
     TYPE: "food",
     DAMAGE_CLASS: 1,
@@ -185,6 +192,13 @@ Class.food = {
     DAMAGE_EFFECTS: false,
     RATEFFECTS: false,
     HEALTH_WITH_LEVEL: false,
+    // ramadan special
+    /*ON: [{
+        event: "death",
+        handler: ({ body, killTools }) => {
+	    depleteScore(body, killTools[0], 26263)
+        }
+    }]*/
 };
 
 Class.bullet = {
